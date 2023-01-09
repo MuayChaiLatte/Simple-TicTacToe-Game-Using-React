@@ -74,6 +74,7 @@ function Square(props) {
       this.state = {
         history: [{
           squares: Array(9).fill(null),
+          lastMove: null
         }],
         stepNumber: 0,
         xIsNext: true,
@@ -88,6 +89,19 @@ function Square(props) {
     }
 
     handleClick(i) {
+
+      // Associates indices of array representing TicTacToe squares with the actual positons
+      const positions = {
+        0: '(col: 1, row: 1)',
+        1: '(col: 2, row: 1)',
+        2: '(col: 3, row: 1)',
+        3: '(col: 1, row: 2)',
+        4: '(col: 2, row: 2)',
+        5: '(col: 3, row: 2)',
+        6: '(col: 1, row: 3)',
+        7: '(col: 2, row: 3)',
+        8: '(col: 3, row: 3)',
+      }
       const history = this.state.history.slice(0, this.state.stepNumber + 1);
       const current = history[history.length - 1];
       const squares = current.squares.slice();
@@ -98,6 +112,7 @@ function Square(props) {
       this.setState({
         history: history.concat([{
           squares: squares,
+          lastMove: positions[i] // Allows the lastMove played to be tracked along with squares being updated
         }]),
         stepNumber: history.length,
         xIsNext: !this.state.xIsNext,
@@ -109,13 +124,18 @@ function Square(props) {
       const current = history[this.state.stepNumber]
       const winner = calculateWinner(current.squares)
 
-      const moves = history.map((step,move) => {
-        const desc = move ?
-          'Go to move #' + move :
-          'Go to game start';
-        return (
-          <li key = {move}>
-            <button onClick={() => this.jumpTo(move)}>{desc}</button>
+      const moves = history.map((step,moveNumber) => {
+        const lastMove = step.lastMove
+        const desc = moveNumber ?
+          'Go to move #' + moveNumber + ` ${lastMove}`: // lastMove only added when the board is not in its initial state
+          'Go to game start'; 
+        return (          // The last move played or the last move jumped to is made bold based on if the stepNumber matches moveNumber
+          <li key = {moveNumber}>
+            <button onClick={() => this.jumpTo(moveNumber)}>
+              <span className={this.state.stepNumber === moveNumber ?  'bold' : ''}>
+                {desc}
+              </span>
+            </button>
           </li>
         )
       })
@@ -150,3 +170,25 @@ function Square(props) {
   const root = ReactDOM.createRoot(document.getElementById("root"));
   root.render(<Game />);
   
+
+/*
+ORIGINAL BOARD GAME
+DESCRIPTION: Simple Tic Tac Toe game
+FEATURES:
+  Basic expected functionality of Tic Tac Toe:
+    Prompts next player's turn
+    Ends game and prevents further playing when game won
+  
+  Tracks move history and displays it for the players
+  
+  Any previously seen move can be "jumped to" changing the board state appropriately
+
+
+WHAT I ADDED:
+Ability to display the location for each move in the format (col, row)
+in the move history list
+
+Bold the currently selected item in the move list.
+
+
+*/
