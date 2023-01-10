@@ -78,6 +78,7 @@ function Square(props) {
         }],
         stepNumber: 0,
         xIsNext: true,
+        moveListReversed: false,
       };
     }
 
@@ -86,6 +87,12 @@ function Square(props) {
         stepNumber: step,
         xIsNext: (step % 2) === 0,
       });
+    }
+
+    toggleMoveListOrder() {
+      this.setState({
+        moveListReversed: !this.state.moveListReversed
+      })
     }
 
     handleClick(i) {
@@ -124,7 +131,7 @@ function Square(props) {
       const current = history[this.state.stepNumber]
       const winner = calculateWinner(current.squares)
 
-      const moves = history.map((step,moveNumber) => {
+      let moves = history.map((step,moveNumber) => {
         const lastMove = step.lastMove
         const desc = moveNumber ?
           'Go to move #' + moveNumber + ` ${lastMove}`: // lastMove only added when the board is not in its initial state
@@ -139,6 +146,9 @@ function Square(props) {
           </li>
         )
       })
+      if (this.state.moveListReversed) {
+        moves = moves.reverse()
+      }
 
       let status;
       if (winner) {
@@ -147,6 +157,8 @@ function Square(props) {
       else {
         status = 'Next player: ' + (this.state.xIsNext? 'X' : 'O')
       }
+
+
 
       return (
         <div className="game">
@@ -157,6 +169,7 @@ function Square(props) {
             />
           </div>
           <div className="game-info">
+            <div><button onClick={() => this.toggleMoveListOrder()}>Toggle Move List Order</button></div>
             <div>{status}</div>
             <ol>{moves}</ol>
           </div>
@@ -184,11 +197,13 @@ FEATURES:
   Any previously seen move can be "jumped to" changing the board state appropriately
 
 
-WHAT I ADDED:
+FEATURES I HAVE ADDED:
 Ability to display the location for each move in the format (col, row)
 in the move history list
 
 Bold the currently selected item in the move list.
+
+Add a toggle button that lets you sort the moves in either ascending or descending order.
 
 
 */
