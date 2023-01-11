@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 
 
-function calculateWinner(squares) {
+function calculateWinningLine(squares) {
   const lines = [
     [0,1,2],
     [3,4,5],
@@ -17,7 +17,7 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a,b,c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return [a,b,c]; 
     }
   }
   return null;
@@ -26,7 +26,7 @@ function calculateWinner(squares) {
 function Square(props) {
   return (
     <button
-      className='square'
+      className= {`square ${props.isWinner? 'winner' : ''}`} // Only adds the winner class if square identified as a winner
       onClick={props.onClick}
       >
         {props.value}
@@ -41,6 +41,7 @@ function Square(props) {
             <Square 
                 value={this.props.squares[i]}
                 onClick={() => this.props.onClick(i)}
+                isWinner = {this.props.winningLine.includes(i)} // Checks if the winning line is present and if the currently rendered square is a winning square
                 />
         );
     }
@@ -112,10 +113,11 @@ function Square(props) {
       const history = this.state.history.slice(0, this.state.stepNumber + 1);
       const current = history[history.length - 1];
       const squares = current.squares.slice();
-      if (calculateWinner(squares) || squares[i]) {
+      if (calculateWinningLine(squares) || squares[i]) {
         return
       }
       squares[i] = this.state.xIsNext? 'X' : 'O';
+
       this.setState({
         history: history.concat([{
           squares: squares,
@@ -129,7 +131,7 @@ function Square(props) {
     render() {
       const history = this.state.history
       const current = history[this.state.stepNumber]
-      const winner = calculateWinner(current.squares)
+      const winner = calculateWinningLine(current.squares)
 
       let moves = history.map((step,moveNumber) => {
         const lastMove = step.lastMove
@@ -152,7 +154,7 @@ function Square(props) {
 
       let status;
       if (winner) {
-        status = 'Winner: ' + winner
+        status = 'Winner: ' + current.squares[winner[0]] // winner contains the positions of only winning squares so will select the correct character fomr squares
       }
       else {
         status = 'Next player: ' + (this.state.xIsNext? 'X' : 'O')
@@ -166,6 +168,7 @@ function Square(props) {
             <Board 
             squares = {current.squares} 
             onClick = {(i) => this.handleClick(i)}
+            winningLine = {winner? winner : ''} // winningLine only defined as a prop if a player wins
             />
           </div>
           <div className="game-info">
@@ -205,5 +208,5 @@ Bold the currently selected item in the move list.
 
 Add a toggle button that lets you sort the moves in either ascending or descending order.
 
-
+Highlights the three winning squares upon winning
 */

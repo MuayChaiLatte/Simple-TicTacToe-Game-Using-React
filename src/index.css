@@ -53,3 +53,6 @@ body {
     font-weight: bold;
   }
   
+  .winner {
+    background: green;
+  }
