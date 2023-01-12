@@ -209,4 +209,6 @@ Bold the currently selected item in the move list.
 Add a toggle button that lets you sort the moves in either ascending or descending order.
 
 Highlights the three winning squares upon winning
+
+When no one wins, display a message about the result being a draw
 */
