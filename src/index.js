@@ -45,29 +45,55 @@ function Square(props) {
                 />
         );
     }
-  
+
     render() {
+      let boardRows = [];
+      let squareCount = 0; // Squarecount initialised to 0 and incremented to avoid refactoring of previous code which relies on rendersquare method being called with numbers 0-9 as arguments to differentiate square positions
+      for (let y = 0; y < 3; y++) {
+        let row = []        
+        for (let x = 0; x < 3; x++) {
+          row.push(this.renderSquare(squareCount))
+          squareCount++
+        }
+        boardRows.push(
+        <div className='board-row'>
+          {row}
+        </div>
+        )
+      }
       return (
         <div>
-          <div className="board-row">
-            {this.renderSquare(0)}
-            {this.renderSquare(1)}
-            {this.renderSquare(2)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(3)}
-            {this.renderSquare(4)}
-            {this.renderSquare(5)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(6)}
-            {this.renderSquare(7)}
-            {this.renderSquare(8)}
-          </div>
+          {boardRows}
         </div>
-      );
+      )
     }
+  
+    // PREVIOUS RENDER METHOD
+    // render() {
+    //   return (
+    //     <div>
+    //       <div className="board-row">
+    //         {this.renderSquare(0)}
+    //         {this.renderSquare(1)}
+    //         {this.renderSquare(2)}
+    //       </div>
+    //       <div className="board-row">
+    //         {this.renderSquare(3)}
+    //         {this.renderSquare(4)}
+    //         {this.renderSquare(5)}
+    //       </div>
+    //       <div className="board-row">
+    //         {this.renderSquare(6)}
+    //         {this.renderSquare(7)}
+    //         {this.renderSquare(8)}
+    //       </div>
+    //     </div>
+    //   );
+    // }
+
   }
+
+
   
   class Game extends React.Component {
     constructor(props) {
@@ -154,7 +180,10 @@ function Square(props) {
 
       let status;
       if (winner) {
-        status = 'Winner: ' + current.squares[winner[0]] // winner contains the positions of only winning squares so will select the correct character fomr squares
+        status = 'Winner: ' + current.squares[winner[0]] // winner contains the positions of only winning squares so will select the correct character from squares
+      }
+      else if (current.squares.every(element => element)) {
+        status = 'It\'s a draw!'
       }
       else {
         status = 'Next player: ' + (this.state.xIsNext? 'X' : 'O')
@@ -188,6 +217,10 @@ function Square(props) {
   
 
 /*
+State that causes a draw is
+
+
+
 ORIGINAL BOARD GAME
 DESCRIPTION: Simple Tic Tac Toe game
 FEATURES:
@@ -211,4 +244,6 @@ Add a toggle button that lets you sort the moves in either ascending or descendi
 Highlights the three winning squares upon winning
 
 When no one wins, display a message about the result being a draw
+
+Rewrote board to use 2 loops to construct the squares rather than hardcoding them
 */
